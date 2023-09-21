@@ -6,7 +6,9 @@ namespace Terpz710\ProtectionPlus\Command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\item\ItemIds;
+use pocketmine\item\Item;
+use pocketmine\item\StringToItemParser;
+use pocketmine\item\LegacyStringToItemParser;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\player\PlayerBucketEmptyEvent;
@@ -134,6 +136,25 @@ class ProtectCommand extends Command implements Listener {
     }
 
     /**
+ * Check if the given item is a griefing item.
+ *
+ * @param Item $item
+ * @param array $args
+ * @return bool
+ */
+private function isGriefingItem(Item $item, array $args): bool {
+    // Convert item names in $args to item objects and check if the held item matches any of them.
+    foreach ($args as $itemString) {
+        $allowedItem = StringToItemParser::getInstance()->parse($itemString) ?? LegacyStringToItemParser::getInstance()->parse($itemString);
+        if ($allowedItem !== null && $item->equals($allowedItem, true, true)) {
+            return false; // The held item matches an allowed item, so it's not a griefing item.
+        }
+    }
+
+    return true; // The held item doesn't match any allowed item, so it's a griefing item.
+}
+
+/**
  * @param PlayerInteractEvent $event
  * @priority HIGHEST
  */
@@ -141,30 +162,21 @@ public function onPlayerInteract(PlayerInteractEvent $event): void {
     $player = $event->getPlayer();
     $world = $player->getWorld()->getFolderName();
     $itemInHand = $event->getItem();
-
-    // Check if block protection is active in this world and the player is holding a griefing item.
-    if (isset($this->protectionActive[$world]) && $this->isGriefingItem($itemInHand)) {
-        $player->sendMessage("Block protection is active in this world. You cannot use this item.");
-        $event->cancel();
-    }
-}
-
-/**
- * Check if the given item is a griefing item.
- *
- * @param Item $item
- * @return bool
- */
-private function isGriefingItem(Item $item): bool {
-    $griefingItems = [
-        ItemIds::FLINT_AND_STEEL,
-        ItemIds::SHEARS,
-        ItemIds::BUCKET,
-        ItemIds::LAVA_BUCKET,
-        ItemIds::WATER_BUCKET,
-        // Adding more item here later.
+    $args = [
+        "minecraft:flint_and_steel",
+        "minecraft:shears",
+        "minecraft:bucket",          // Empty bucket
+        "minecraft:lava_bucket",
+        "minecraft:water_bucket",
+        "minecraft:tnt",
+        "minecraft:fire_charge",
+        "minecraft:end_crystal",
+        // Add more item names here as needed...
     ];
 
-    return in_array($item->getId(), $griefingItems);
+    // Check if block protection is active in this world and the player is holding a prohibited item.
+    if (isset($this->protectionActive[$world]) && $this->isGriefingItem($itemInHand, $args)) {
+        $player->sendMessage("Block protection is active in this world. You cannot use this item.");
+        $event->cancel();
     }
 }
