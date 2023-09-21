@@ -27,36 +27,33 @@ class ProtectCommand extends Command implements Listener {
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
-    if ($sender instanceof Player) {
-        if (!$this->testPermission($sender)) {
-            $sender->sendMessage("You do not have permission to use this command");
-            return true;
-        }
+        if ($sender instanceof Player) {
+            if (!$this->testPermission($sender)) {
+                $sender->sendMessage("You do not have permission to use this command");
+                return true;
+            }
 
-        $world = $sender->getWorld()->getFolderName();
-        $action = strtolower($args[0] ?? "");
+            $world = $sender->getWorld()->getFolderName();
+            $action = strtolower($args[0] ?? "");
 
-        switch ($action) {
-            case "on":
-                $this->protectionActive[$world] = true;
-                $sender->sendMessage("Block protection is now active in the $world.");
-                break;
-            case "off":
-                if (isset($this->protectionActive[$world])) {
+            switch ($action) {
+                case "on":
+                    $this->protectionActive[$world] = true;
+                    $sender->sendMessage("Block protection is now active in the $world.");
+                    break;
+                case "off":
                     unset($this->protectionActive[$world]);
                     $sender->sendMessage("Block protection is now inactive in the $world.");
-                } else {
-                    $sender->sendMessage("Block protection is already inactive in the $world.");
-                }
-                break;
-            default:
-                $sender->sendMessage("Usage: /protection <on|off>");
+                    break;
+                default:
+                    $sender->sendMessage("Usage: /protection <on|off>");
+            }
+        } else {
+            $sender->sendMessage("This command can only be used in-game");
         }
-    } else {
-        $sender->sendMessage("This command can only be used in-game");
+        return true;
     }
-    return true;
-}
+
     /**
      * @param BlockBreakEvent $event
      * @priority HIGHEST
@@ -125,17 +122,15 @@ class ProtectCommand extends Command implements Listener {
     }
 
     /**
- * Handle block action and send a message to the player.
- *
- * @param $event
- * @param Player $player
- */
-private function handleBlockAction($event, Player $player): void {
-    if (isset($this->protectionActive[$player->getWorld()->getFolderName()])) {
+     * Handle block action and send a message to the player.
+     *
+     * @param $event
+     * @param Player $player
+     */
+    private function handleBlockAction($event, Player $player): void {
         if ($event->isCancelled()) return;
         $event->cancel();
     }
-}
 
 /**
  * @param PlayerInteractEvent $event
@@ -144,20 +139,7 @@ private function handleBlockAction($event, Player $player): void {
 public function onPlayerInteract(PlayerInteractEvent $event): void {
     $player = $event->getPlayer();
     $world = $player->getWorld()->getFolderName();
-    if (isset($this->protectionActive[$world]) && $player->getInventory()->getItem()->item()) {
-        $player->sendMessage("Block protection is active in this world. You cannot use items.");
-        $event->cancel();
-        }
-    }
-    
-/**
- * @param PlayerItemUseEvent $event
- * @priority HIGHEST
- */
-public function onPlayerItemUse(PlayerItemUseEvent $event): void {
-    $player = $event->getPlayer();
-    $world = $player->getWorld()->getFolderName();
-    if (isset($this->protectionActive[$world]) && $player->getInventory()->getItem()->item()) {
+    if (isset($this->protectionActive[$world])) {
         $player->sendMessage("Block protection is active in this world. You cannot use items.");
         $event->cancel();
         }
