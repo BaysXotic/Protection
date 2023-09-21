@@ -50,21 +50,18 @@ class ProtectCommand extends Command implements Listener {
         return true;
     }
 
-    protected function checkBlockPlaceBreak(Player $player): bool {
-        $world = $player->getWorld()->getFolderName();
-        return isset($this->protectionActive[$world]);
-    }
-
     /**
      * @param BlockBreakEvent $event
      * @priority HIGHEST
      */
     public function onBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
-        if ($this->checkBlockPlaceBreak($player)) {
+        $world = $player->getWorld()->getFolderName();
+        if (isset($this->protectionActive[$world])) {
             $player->sendMessage("Block protection is active in this world. You cannot break blocks.");
-            $event->isCancelled();
+            $event->cancel();
         }
+        $this->handleBlockAction($event, $player);
     }
 
     /**
@@ -73,9 +70,25 @@ class ProtectCommand extends Command implements Listener {
      */
     public function onBlockPlace(BlockPlaceEvent $event): void {
         $player = $event->getPlayer();
-        if ($this->checkBlockPlaceBreak($player)) {
+        $world = $player->getWorld()->getFolderName();
+        if (isset($this->protectionActive[$world])) {
             $player->sendMessage("Block protection is active in this world. You cannot place blocks.");
-            $event->isCancelled();
+            $event->cancel();
+        }
+        $this->handleBlockAction($event, $player);
+    }
+
+    /**
+     * Handle block action and send a message to the player.
+     *
+     * @param $event
+     * @param Player $player
+     */
+    private function handleBlockAction($event, Player $player): void {
+        if ($event->isCancelled()) return;
+        if ($this->checkBlockPlaceBreak($player)) {
+            $this->owner->msg($player, mc::_("You are not allowed to do that here"));
+            $event->cancel();
         }
     }
 }
