@@ -57,8 +57,10 @@ class ProtectCommand extends Command implements Listener {
 
         if ($this->protectionActive) {
             if (!$player->hasPermission("protectionplus.bypass")) {
+             if($player->getWorldManager()->getWorldByName()) {
                 $player->sendMessage("Block protection is active. You cannot break blocks.");
-                $event->setCancelled();
+                $event->setCancelled(true);
+                }
             }
         }
     }
