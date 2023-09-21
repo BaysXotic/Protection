@@ -11,7 +11,7 @@ use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 
-class ProtectionCommand extends Command implements Listener {
+class ProtectCommand extends Command implements Listener {
 
     private $protectionActive = false;
 
