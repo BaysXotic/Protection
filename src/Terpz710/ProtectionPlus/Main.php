@@ -10,6 +10,6 @@ use ProtectionPlus\Command\ProtectionCommand;
 class Main extends PluginBase {
 
     public function onEnable(): void {
-        $this->getServer()->getCommandMap()->register("protection", new ProtectionCommand($this));
+        $this->getServer()->getCommandMap()->register("protection", new ProtectCommand($this));
     }
 }
