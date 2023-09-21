@@ -34,7 +34,7 @@ class InteractCommand extends Command implements Listener {
     public function onPlayerInteract(PlayerInteractEvent $event): void {
         $player = $event->getPlayer();
         
-        if ($player->getInventory()->getItemInHand()->getId() !== 0) {
+        if ($player->getInventory()->getItemInHand()->getItem() !== 0) {
             $player->sendMessage("Interaction blocking is active. You cannot use items.");
             $event->cancel();
         }
