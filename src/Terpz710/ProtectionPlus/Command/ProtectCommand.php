@@ -125,15 +125,17 @@ class ProtectCommand extends Command implements Listener {
     }
 
     /**
-     * Handle block action and send a message to the player.
-     *
-     * @param $event
-     * @param Player $player
-     */
-    private function handleBlockAction($event, Player $player): void {
+ * Handle block action and send a message to the player.
+ *
+ * @param $event
+ * @param Player $player
+ */
+private function handleBlockAction($event, Player $player): void {
+    if (isset($this->protectionActive[$player->getWorld()->getFolderName()])) {
         if ($event->isCancelled()) return;
         $event->cancel();
     }
+}
 
 /**
  * @param PlayerInteractEvent $event
