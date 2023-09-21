@@ -133,6 +133,22 @@ class ProtectCommand extends Command implements Listener {
         $event->cancel();
     }
 
+    /**
+ * @param PlayerInteractEvent $event
+ * @priority HIGHEST
+ */
+public function onPlayerInteract(PlayerInteractEvent $event): void {
+    $player = $event->getPlayer();
+    $world = $player->getWorld()->getFolderName();
+    $itemInHand = $event->getItem();
+
+    // Check if block protection is active in this world and the player is holding a griefing item.
+    if (isset($this->protectionActive[$world]) && $this->isGriefingItem($itemInHand)) {
+        $player->sendMessage("Block protection is active in this world. You cannot use this item.");
+        $event->cancel();
+    }
+}
+
 /**
  * Check if the given item is a griefing item.
  *
