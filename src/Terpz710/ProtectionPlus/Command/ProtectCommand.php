@@ -144,7 +144,7 @@ private function handleBlockAction($event, Player $player): void {
 public function onPlayerInteract(PlayerInteractEvent $event): void {
     $player = $event->getPlayer();
     $world = $player->getWorld()->getFolderName();
-    if (isset($this->protectionActive[$world])) {
+    if (isset($this->protectionActive[$world]) && $player->getInventory()->getItemInHand()->getId() !== 0) {
         $player->sendMessage("Block protection is active in this world. You cannot use items.");
         $event->cancel();
         }
