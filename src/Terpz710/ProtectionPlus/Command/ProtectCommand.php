@@ -178,5 +178,6 @@ public function onPlayerInteract(PlayerInteractEvent $event): void {
     if (isset($this->protectionActive[$world]) && $this->isGriefingItem($itemInHand, $args)) {
         $player->sendMessage("Block protection is active in this world. You cannot use this item.");
         $event->cancel();
+        }
     }
 }
