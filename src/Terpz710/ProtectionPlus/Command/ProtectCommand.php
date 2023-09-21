@@ -53,9 +53,7 @@ class ProtectCommand extends Command implements Listener {
 
     protected function checkBlockPlaceBreak(Player $player): bool {
         $world = $player->getWorld()->getFolderName();
-        if (!isset($this->wcfg[$world])) return true;
-        if ($this->wcfg[$world] !== "protect") return false; // LOCKED!
-        return true;
+        return isset($this->protectionActive[$world]);
     }
 
     /**
@@ -64,15 +62,11 @@ class ProtectCommand extends Command implements Listener {
      */
     public function onBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
-        $world = $player->getWorld()->getFolderName();
-
-        if (isset($this->protectionActive[$world])) {
-            if (!$player->hasPermission("protectionplus.bypass")) {
-                if (!$this->checkBlockPlaceBreak($player)) {
-                    $player->sendMessage("Block protection is active in the world $world. You cannot break blocks.");
-                    $event->isCancelled(true);
-                }
-            }
+        if ($this->checkBlockPlaceBreak($player)) {
+            $player->sendMessage("Block protection is active in this world. You cannot break blocks.");
+            $event->isCancelled(true);
+        } else {
+            $event->isCancelled(false); // Allow block break
         }
     }
 
@@ -82,15 +76,11 @@ class ProtectCommand extends Command implements Listener {
      */
     public function onBlockPlace(BlockPlaceEvent $event): void {
         $player = $event->getPlayer();
-        $world = $player->getWorld()->getFolderName();
-
-        if (isset($this->protectionActive[$world])) {
-            if (!$player->hasPermission("protectionplus.bypass")) {
-                if (!$this->checkBlockPlaceBreak($player)) {
-                    $player->sendMessage("Block protection is active in the world $world. You cannot place blocks.");
-                    $event->isCancelled(true);
-                }
-            }
+        if ($this->checkBlockPlaceBreak($player)) {
+            $player->sendMessage("Block protection is active in this world. You cannot place blocks.");
+            $event->isCancelled(true);
+        } else {
+            $event->isCancelled(false); // Allow block place
         }
     }
 }
