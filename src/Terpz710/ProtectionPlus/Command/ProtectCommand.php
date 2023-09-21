@@ -67,7 +67,7 @@ class ProtectCommand extends Command implements Listener {
         if ($this->checkBlockPlaceBreak($player)) {
             if (isset($this->protectionActive[$world]) && $action === "on") {
                 $player->sendMessage("Block protection is active in this world. You cannot break blocks.");
-                $event->isCancelled(); // Cancel the block breaking event
+                $event->isCancelled(true); // Cancel the block breaking event
             } elseif (!isset($this->protectionActive[$world]) && $action === "off") {
                 $event->isCancelled(false); // Allow block breaking event
             }
@@ -86,7 +86,7 @@ class ProtectCommand extends Command implements Listener {
         if ($this->checkBlockPlaceBreak($player)) {
             if (isset($this->protectionActive[$world]) && $action === "on") {
                 $player->sendMessage("Block protection is active in this world. You cannot place blocks.");
-                $event->isCancelled(); // Cancel the block placing event
+                $event->isCancelled(true); // Cancel the block placing event
             } elseif (!isset($this->protectionActive[$world]) && $action === "off") {
                 $event->isCancelled(false); // Allow block placing event
             }
