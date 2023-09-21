@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Terpz710\ProtectionPlus;
 
 use pocketmine\plugin\PluginBase;
-use ProtectionPlus\Command\ProtectionCommand;
+use ProtectionPlus\Command\ProtectCommand;
 
 class Main extends PluginBase {
 
