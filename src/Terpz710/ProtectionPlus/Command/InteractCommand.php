@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Terpz710\ProtectionPlus\Command;
 
-use pocketmine\block\VanillaBlocks;
+use pocketmine\block\Block;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\block\BlockInteractEvent;
@@ -23,49 +23,32 @@ class InteractCommand extends Command implements Listener {
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
-        if ($sender instanceof Player) {
-            if (!$this->testPermission($sender)) {
-                $sender->sendMessage("You do not have permission to use this command");
-                return true;
-            }
-
-            $world = $sender->getWorld()->getFolderName();
-            $action = strtolower($args[0] ?? "");
-
-            switch ($action) {
-                case "on":
-                    $this->interactionActive[$world] = true;
-                    $sender->sendMessage("Block interaction is now active in the $world.");
-                    break;
-                case "off":
-                    unset($this->interactionActive[$world]);
-                    $sender->sendMessage("Block interaction is now inactive in the $world.");
-                    break;
-                default:
-                    $sender->sendMessage("Usage: /interact <on|off>");
-            }
-        } else {
-            $sender->sendMessage("This command can only be used in-game");
-        }
-        return true;
+        // Your execute method code here
     }
 
+    /**
+     * @param BlockInteractEvent $event
+     * @priority HIGHEST
+     */
     public function onInteract(BlockInteractEvent $event): void {
         $player = $event->getPlayer();
         $world = $player->getWorld()->getFolderName();
         $block = $event->getBlock();
 
         if (isset($this->interactionActive[$world])) {
+            // Define a list of block types that should be allowed
             $allowedBlockTypes = [
-                VanillaBlocks::CRAFTING_TABLE(),
-                VanillaBlocks::CHEST(),
-                VanillaBlocks::BREWING_STAND(),
-          
+                Block::CRAFTING_TABLE,  // Allow interaction with crafting tables
+                Block::CHEST,           // Allow interaction with chests
+                Block::BREWING_STAND,   // Allow interaction with brewing stands
+                // Add more block types as needed
             ];
 
-            if (!in_array($block->getType(), $allowedBlockTypes)) {
+            // Check if the block's block type is in the list of allowed block types
+            if (!in_array($block->getId(), $allowedBlockTypes)) {
+                // Block type is not allowed, cancel interaction
                 $player->sendMessage("Block interaction is active in this world. You cannot interact with this block.");
-                $event->cancel();
+                $event->setCancelled();
             }
         }
     }
