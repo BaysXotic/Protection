@@ -125,16 +125,18 @@ class ProtectCommand extends Command implements Listener {
     }
 
     /**
-     * Handle block action and send a message to the player.
-     *
-     * @param $event
-     * @param Player $player
-     */
-    private function handleBlockAction($event, Player $player): void {
+ * Handle block action and send a message to the player.
+ *
+ * @param $event
+ * @param Player $player
+ */
+private function handleBlockAction($event, Player $player): void {
+    if (isset($this->protectionActive[$player->getWorld()->getFolderName()])) {
         if ($event->isCancelled()) return;
         $event->cancel();
     }
-
+}
+    
     /**
  * Check if the given item is a griefing item.
  *
@@ -168,9 +170,7 @@ public function onPlayerInteract(PlayerInteractEvent $event): void {
         "minecraft:bucket",          // Empty bucket
         "minecraft:lava_bucket",
         "minecraft:water_bucket",
-        "minecraft:tnt",
         "minecraft:fire_charge",
-        "minecraft:end_crystal",
         // Add more item names here as needed...
     ];
 
