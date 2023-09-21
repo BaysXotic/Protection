@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ProtectionPlus\Command;
+namespace Terpz710\ProtectionPlus\Command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -10,9 +10,8 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
-use Terpz710\ProtectionPlus\Main;
 
-class ProtectCommand extends Command implements Listener {
+class ProtectionCommand extends Command implements Listener {
 
     private $protectionActive = false;
 
