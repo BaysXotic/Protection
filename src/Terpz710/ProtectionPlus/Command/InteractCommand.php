@@ -59,13 +59,13 @@ class InteractCommand extends Command implements Listener {
     private function enableInteraction(Player $player): void {
         $this->interactionEnabled = true;
         $player->sendMessage("Interaction with chests, doors, and players is now enabled.");
-        $player->addTitle("Interaction Enabled", "", 10, 40, 10);
+        $player->sendTitle("Interaction Enabled", "", 10, 40, 10);
     }
 
     private function disableInteraction(Player $player): void {
         $this->interactionEnabled = false;
         $player->sendMessage("Interaction with chests, doors, and players is now disabled.");
-        $player->addTitle("Interaction Disabled", "", 10, 40, 10);
+        $player->sendTitle("Interaction Disabled", "", 10, 40, 10);
     }
 
     public function onPlayerInteract(PlayerInteractEvent $event): void {
@@ -76,11 +76,11 @@ class InteractCommand extends Command implements Listener {
             if ($block->getId() === Block::CHEST || $block->getId() === Block::TRAPPED_CHEST) {
                 $event->setCancelled(true);
                 $player->sendMessage("Chest interaction is currently disabled.");
-                $player->addTitle("Interaction Disabled", "Chest interaction is disabled", 10, 40, 10);
+                $player->sendTitle("Interaction Disabled", "Chest interaction is disabled", 10, 40, 10);
             } elseif ($block->isInteractable() || $event->getEntity() instanceof Player) {
                 $event->setCancelled(true);
                 $player->sendMessage("Interaction with this block or player is currently disabled.");
-                $player->addTitle("Interaction Disabled", "Block/player interaction is disabled", 10, 40, 10);
+                $player->sendTitle("Interaction Disabled", "Block/player interaction is disabled", 10, 40, 10);
             }
         }
     }
