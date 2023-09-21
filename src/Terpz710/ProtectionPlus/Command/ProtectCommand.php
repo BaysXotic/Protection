@@ -10,6 +10,7 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
+use Terpz710\ProtectionPlus\Main;
 
 class ProtectCommand extends Command implements Listener {
 
