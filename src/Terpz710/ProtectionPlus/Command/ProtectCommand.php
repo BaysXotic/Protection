@@ -57,9 +57,10 @@ class ProtectCommand extends Command implements Listener {
 
     /**
      * @param BlockBreakEvent $event
+     * @param array $args
      * @priority HIGHEST
      */
-    public function onBreak(BlockBreakEvent $event): void {
+    public function onBreak(BlockBreakEvent $event, array $args): void {
         $player = $event->getPlayer();
         $world = $player->getWorld()->getFolderName();
         $action = strtolower($args[0] ?? "");
@@ -76,9 +77,10 @@ class ProtectCommand extends Command implements Listener {
 
     /**
      * @param BlockPlaceEvent $event
+     * @param array $args
      * @priority HIGHEST
      */
-    public function onBlockPlace(BlockPlaceEvent $event): void {
+    public function onBlockPlace(BlockPlaceEvent $event, array $args): void {
         $player = $event->getPlayer();
         $world = $player->getWorld()->getFolderName();
         $action = strtolower($args[0] ?? "");
