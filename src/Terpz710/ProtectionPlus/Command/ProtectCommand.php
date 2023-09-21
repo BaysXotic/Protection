@@ -55,7 +55,7 @@ class ProtectCommand extends Command implements Listener {
         $world = $player->getWorld()->getFolderName();
         if (!isset($this->wcfg[$world])) return true;
         if ($this->wcfg[$world] !== "protect") return false; // LOCKED!
-        return true; // Add your additional checks for block place/break here
+        return true;
     }
 
     /**
