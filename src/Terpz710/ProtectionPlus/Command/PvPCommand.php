@@ -56,13 +56,13 @@ class PvPCommand extends Command implements Listener {
     private function enablePvP(Player $player): void {
         $this->plugin->setPvPEnabled($player, true);
         $player->sendMessage("PvP is now enabled!");
-        $player->addTitle("PvP Enabled", "", 10, 40, 10);
+        $player->sendTitle("PvP Enabled", "", 10, 40, 10);
     }
 
     private function disablePvP(Player $player): void {
         $this->plugin->setPvPEnabled($player, false);
         $player->sendMessage("PvP is now disabled!");
-        $player->addTitle("PvP Disabled", "", 10, 40, 10);
+        $player->sendTitle("PvP Disabled", "", 10, 40, 10);
     }
 
     public function onEntityDamage(EntityDamageEvent $event): void {
