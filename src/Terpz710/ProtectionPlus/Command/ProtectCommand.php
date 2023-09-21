@@ -7,6 +7,7 @@ namespace Terpz710\ProtectionPlus\Command;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
@@ -52,6 +53,13 @@ class ProtectCommand extends Command implements Listener {
         return true;
     }
 
+    protected function checkBlockPlaceBreak(Player $player): bool {
+        $world = $player->getWorld()->getFolderName();
+        if (!isset($this->wcfg[$world])) return true;
+        if ($this->wcfg[$world] !== "protect") return false; // LOCKED!
+        return $this->owner->canPlaceBreakBlock($player, $world);
+    }
+
     /**
      * @param BlockBreakEvent $event
      * @priority HIGHEST
@@ -62,8 +70,28 @@ class ProtectCommand extends Command implements Listener {
 
         if (isset($this->protectionActive[$world])) {
             if (!$player->hasPermission("protectionplus.bypass")) {
-                $player->sendMessage("Block protection is active in the world $world. You cannot break blocks.");
-                $event->setCancelled(true);
+                if ($this->checkBlockPlaceBreak($player)) {
+                    $player->sendMessage("Block protection is active in the world $world. You cannot break blocks.");
+                    $event->setCancelled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param BlockPlaceEvent $event
+     * @priority HIGHEST
+     */
+    public function onBlockPlace(BlockPlaceEvent $event): void {
+        $player = $event->getPlayer();
+        $world = $player->getWorld()->getFolderName();
+
+        if (isset($this->protectionActive[$world])) {
+            if (!$player->hasPermission("protectionplus.bypass")) {
+                if ($this->checkBlockPlaceBreak($player)) {
+                    $player->sendMessage("Block protection is active in the world $world. You cannot place blocks.");
+                    $event->setCancelled(true);
+                }
             }
         }
     }
