@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Terpz710\ProtectionPlus\Command;
 
+use pocketmine\block\VanillaBlocks;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\block\BlockBreakEvent;
@@ -14,14 +15,12 @@ use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwnedTrait;
-use pocketmine\tile\ItemFrame;
-use pocketmine\tile\Sign;
 
 class InteractCommand extends Command implements Listener {
     use PluginOwnedTrait;
 
     public function __construct(Plugin $owningPlugin) {
-        parent::__construct("interact", "Enable or disable interaction with doors, trapdoors, and chests", null, [$owningPlugin]);
+        parent::__construct("interact", "Enable or disable interaction with certain blocks", null, [$owningPlugin]);
         $this->setPermission("protectionplus.interact");
         $owningPlugin->getServer()->getPluginManager()->registerEvents($this, $owningPlugin);
     }
@@ -76,25 +75,21 @@ class InteractCommand extends Command implements Listener {
         $player = $event->getPlayer();
         if (!$this->getOwningPlugin()->isInteractionAllowed($player->getName())) {
             $block = $event->getBlock();
-            $id = $block->getId();
-
             $blockedBlocks = [
-                // types of doors
-                324, 330, 427, 428, 429, 430,
-                // types of trapdoors
-                96, 167, 183, 184, 185,
-                // types of chests
-                27, 28, 54, 146, 338,
+                VanillaBlocks::CHEST,
+                VanillaBlocks::TRAPPED_CHEST,
+                VanillaBlocks::OAK_DOOR_BLOCK,
+                VanillaBlocks::BIRCH_DOOR_BLOCK,
+                VanillaBlocks::SPRUCE_DOOR_BLOCK,
+                VanillaBlocks::FURNACE,
+                VanillaBlocks::CRAFTING_TABLE,
+                // Ill add more block types here as needed
             ];
 
-            if (in_array($id, $blockedBlocks, true)) {
+            if (in_array($block->getId(), $blockedBlocks, true)) {
                 $event->setCancelled();
                 $player->sendMessage("You can't interact with this block while interaction is disabled.");
-            } elseif ($block->getTile() instanceof ItemFrame || $block->getTile() instanceof Sign) {
-                $event->setCancelled();
-                $player->sendMessage("You can't interact with this entity while interaction is disabled.");
             }
         }
     }
 }
-
