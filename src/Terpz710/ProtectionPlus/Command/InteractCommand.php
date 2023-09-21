@@ -11,7 +11,7 @@ use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 
-class InteractionCommand extends Command implements Listener {
+class InteractCommand extends Command implements Listener {
 
     public function __construct(PluginBase $plugin) {
         parent::__construct("interaction", "Toggle block interaction");
