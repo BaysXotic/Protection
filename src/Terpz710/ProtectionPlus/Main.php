@@ -10,7 +10,7 @@ use Terpz710\ProtectionPlus\Command\ProtectCommand;
 
 class Main extends PluginBase {
 
-    public function onEnable(): void 
+    public function onEnable(): void {
         $this->getServer()->getCommandMap()->register("pvp", new PvPCommand($this));
         $this->getServer()->getCommandMap()->register("protect", new ProtectCommand($this));
     }
