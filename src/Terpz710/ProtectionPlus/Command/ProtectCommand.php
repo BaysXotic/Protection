@@ -139,7 +139,7 @@ class ProtectCommand extends Command implements Listener {
  * @param Item $item
  * @return bool
  */
-private function isGriefingItem(Item $item): bool {.
+private function isGriefingItem(Item $item): bool {
     $griefingItems = [
         ItemIds::FLINT_AND_STEEL,
         ItemIds::SHEARS,
