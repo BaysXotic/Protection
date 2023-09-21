@@ -56,13 +56,13 @@ class ProtectionCommand extends Command implements Listener {
     private function enableProtection(Player $player): void {
         $this->plugin->setProtectionEnabled($player, true);
         $player->sendMessage("Protection is now enabled!");
-        $player->addTitle("Protection Enabled", "", 10, 40, 10);
+        $player->sendTitle("Protection Enabled", "", 10, 40, 10);
     }
 
     private function disableProtection(Player $player): void {
         $this->plugin->setProtectionEnabled($player, false);
         $player->sendMessage("Protection is now disabled!");
-        $player->addTitle("Protection Disabled", "", 10, 40, 10);
+        $player->sendTitle("Protection Disabled", "", 10, 40, 10);
     }
 
     public function onEntityDamage(EntityDamageEvent $event): void {
