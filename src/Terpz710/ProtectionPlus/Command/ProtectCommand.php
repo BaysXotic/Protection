@@ -35,11 +35,11 @@ class ProtectCommand extends Command implements Listener {
             switch ($action) {
                 case "on":
                     $this->protectionActive[$world] = true;
-                    $sender->sendMessage("Block protection is now active in the world $world.");
+                    $sender->sendMessage("Block protection is now active in the $world.");
                     break;
                 case "off":
                     unset($this->protectionActive[$world]);
-                    $sender->sendMessage("Block protection is now inactive in the world $world.");
+                    $sender->sendMessage("Block protection is now inactive in the $world.");
                     break;
                 default:
                     $sender->sendMessage("Usage: /protection <on|off>");
@@ -61,20 +61,9 @@ class ProtectCommand extends Command implements Listener {
      */
     public function onBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
-        $world = $player->getWorld()->getFolderName();
-        $action = strtolower($args[0] ?? "");
-
         if ($this->checkBlockPlaceBreak($player)) {
-            if (isset($this->protectionActive[$world]) && $action === "on") {
-                $player->sendMessage("Block protection is active in this world. You cannot break blocks.");
-                if ($event->isCancelled()) {
-                    $event->cancel(true); // Cancel the block breaking event
-                }
-            } elseif (!isset($this->protectionActive[$world]) && $action === "off") {
-                if (!$event->isCancelled()) {
-                    $event->cancel(false); // Allow block breaking event
-                }
-            }
+            $player->sendMessage("Block protection is active in this world. You cannot break blocks.");
+            $event->isCancelled();
         }
     }
 
@@ -84,20 +73,9 @@ class ProtectCommand extends Command implements Listener {
      */
     public function onBlockPlace(BlockPlaceEvent $event): void {
         $player = $event->getPlayer();
-        $world = $player->getWorld()->getFolderName();
-        $action = strtolower($args[0] ?? "");
-
         if ($this->checkBlockPlaceBreak($player)) {
-            if (isset($this->protectionActive[$world]) && $action === "on") {
-                $player->sendMessage("Block protection is active in this world. You cannot place blocks.");
-                if ($event->isCancelled()) {
-                    $event->cancel(true); // Cancel the block placing event
-                }
-            } elseif (!isset($this->protectionActive[$world]) && $action === "off") {
-                if (!$event->isCancelled()) {
-                    $event->cancel(false); // Allow block placing event
-                }
-            }
+            $player->sendMessage("Block protection is active in this world. You cannot place blocks.");
+            $event->isCancelled();
         }
     }
 }
