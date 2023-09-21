@@ -35,11 +35,9 @@ class InteractCommand extends Command implements Listener {
 
             switch ($action) {
                 case "on":
-                    $this->protectionActive[$world] = true;
                     $sender->sendMessage("Block interaction blocking is now active in the $world.");
                     break;
                 case "off":
-                    unset($this->protectionActive[$world]);
                     $sender->sendMessage("Block interaction blocking is now inactive in the $world.");
                     break;
                 default:
