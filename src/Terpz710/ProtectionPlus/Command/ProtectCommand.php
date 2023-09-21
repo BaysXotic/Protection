@@ -12,7 +12,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\entity\EntityDamageEvent;
 use Terpz710\ProtectionPlus\Main;
 
-class ProtectionCommand extends Command implements Listener {
+class ProtectCommand extends Command implements Listener {
 
     private $plugin;
 
