@@ -10,7 +10,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\event\Listener;
 use pocketmine\inventory\BaseInventory;
-use pocketmine\inventory\CraftingGrid;
+use pocketmine\inventory\CraftingGridInventory;
 use pocketmine\inventory\CreativeInventory;
 use pocketmine\inventory\PlayerInventory;
 use pocketmine\plugin\PluginBase;
