@@ -52,7 +52,7 @@ class ProtectCommand extends Command implements Listener {
      * @param BlockBreakEvent $event
      * @priority HIGHEST
      */
-    public function onBlockBreak(BlockBreakEvent $event): void {
+    public function onBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
 
         if ($this->protectionActive) {
