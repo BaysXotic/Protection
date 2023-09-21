@@ -7,6 +7,8 @@ namespace Terpz710\ProtectionPlus\Command;
 use pocketmine\block\BlockIds;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
@@ -55,13 +57,13 @@ class InteractCommand extends Command implements Listener {
     private function enableInteraction(Player $player): void {
         $player->sendMessage("Interaction is now enabled!");
         $player->sendTitle("Interaction Enabled", "", 10, 40, 10);
-        $this->getOwningPlugin()->setAllowInteraction($player->getName(), true);
+        $this->getOwningPlugin()->getServer()->setAllowInteraction($player->getName(), true);
     }
 
     private function disableInteraction(Player $player): void {
         $player->sendMessage("Interaction is now disabled!");
         $player->sendTitle("Interaction Disabled", "", 10, 40, 10);
-        $this->getOwningPlugin()->setAllowInteraction($player->getName(), false);
+        $this->getOwningPlugin()->getServer()->setAllowInteraction($player->getName(), false);
     }
 
     /**
@@ -70,7 +72,7 @@ class InteractCommand extends Command implements Listener {
      */
     public function onPlayerInteract(PlayerInteractEvent $event): void {
         $player = $event->getPlayer();
-        if (!$this->getOwningPlugin()->isInteractionAllowed($player->getName())) {
+        if (!$this->getOwningPlugin()->getServer()->isInteractionAllowed($player->getName())) {
             $block = $event->getBlock();
             $blockedBlocks = [
                 BlockIds::CHEST,
