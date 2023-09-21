@@ -6,6 +6,7 @@ namespace Terpz710\ProtectionPlus\Command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\item\ItemIds;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\player\PlayerBucketEmptyEvent;
@@ -133,15 +134,21 @@ class ProtectCommand extends Command implements Listener {
     }
 
 /**
- * @param PlayerInteractEvent $event
- * @priority HIGHEST
+ * Check if the given item is a griefing item.
+ *
+ * @param Item $item
+ * @return bool
  */
-public function onPlayerInteract(PlayerInteractEvent $event): void {
-    $player = $event->getPlayer();
-    $world = $player->getWorld()->getFolderName();
-    if (isset($this->protectionActive[$world])) {
-        $player->sendMessage("Block protection is active in this world. You cannot use items.");
-        $event->cancel();
-        }
+private function isGriefingItem(Item $item): bool {.
+    $griefingItems = [
+        ItemIds::FLINT_AND_STEEL,
+        ItemIds::SHEARS,
+        ItemIds::BUCKET,
+        ItemIds::LAVA_BUCKET,
+        ItemIds::WATER_BUCKET,
+        // Adding more item here later.
+    ];
+
+    return in_array($item->getId(), $griefingItems);
     }
 }
