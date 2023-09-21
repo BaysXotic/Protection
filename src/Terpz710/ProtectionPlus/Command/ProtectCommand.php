@@ -57,9 +57,10 @@ class ProtectCommand extends Command implements Listener {
 
     /**
      * @param BlockBreakEvent $event
+     * @param array $args
      * @priority HIGHEST
      */
-    public function onBreak(BlockBreakEvent $event): void {
+    public function onBreak(BlockBreakEvent $event, array $args): void {
         $player = $event->getPlayer();
         $world = $player->getWorld()->getFolderName();
         $action = strtolower($args[0] ?? "");
@@ -67,18 +68,19 @@ class ProtectCommand extends Command implements Listener {
         if ($this->checkBlockPlaceBreak($player)) {
             if (isset($this->protectionActive[$world]) && $action === "on") {
                 $player->sendMessage("Block protection is active in this world. You cannot break blocks.");
-                $event->isCancelled(true); // Cancel the block breaking event
+                $event->isCancelled() return true;
             } elseif (!isset($this->protectionActive[$world]) && $action === "off") {
-                $event->isCancelled(false); // Allow block breaking event
+                $event->isCancelled() return false;
             }
         }
     }
 
     /**
      * @param BlockPlaceEvent $event
+     * @param array $args
      * @priority HIGHEST
      */
-    public function onBlockPlace(BlockPlaceEvent $event): void {
+    public function onBlockPlace(BlockPlaceEvent $event, array $args): void {
         $player = $event->getPlayer();
         $world = $player->getWorld()->getFolderName();
         $action = strtolower($args[0] ?? "");
@@ -86,9 +88,9 @@ class ProtectCommand extends Command implements Listener {
         if ($this->checkBlockPlaceBreak($player)) {
             if (isset($this->protectionActive[$world]) && $action === "on") {
                 $player->sendMessage("Block protection is active in this world. You cannot place blocks.");
-                $event->isCancelled(true); // Cancel the block placing event
+                $event->isCancelled() return true;
             } elseif (!isset($this->protectionActive[$world]) && $action === "off") {
-                $event->isCancelled(false); // Allow block placing event
+                $event->isCancelled() return false;
             }
         }
     }
