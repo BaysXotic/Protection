@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Terpz710\ProtectionPlus\Command;
 
-use pocketmine\block\VanillaBlocks;
+use pocketmine\block\BlockIds;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwnedTrait;
@@ -76,14 +73,14 @@ class InteractCommand extends Command implements Listener {
         if (!$this->getOwningPlugin()->isInteractionAllowed($player->getName())) {
             $block = $event->getBlock();
             $blockedBlocks = [
-                VanillaBlocks::CHEST,
-                VanillaBlocks::TRAPPED_CHEST,
-                VanillaBlocks::OAK_DOOR_BLOCK,
-                VanillaBlocks::BIRCH_DOOR_BLOCK,
-                VanillaBlocks::SPRUCE_DOOR_BLOCK,
-                VanillaBlocks::FURNACE,
-                VanillaBlocks::CRAFTING_TABLE,
-                // Ill add more block types here as needed
+                BlockIds::CHEST,
+                BlockIds::TRAPPED_CHEST,
+                BlockIds::OAK_DOOR_BLOCK,
+                BlockIds::BIRCH_DOOR_BLOCK,
+                BlockIds::SPRUCE_DOOR_BLOCK,
+                BlockIds::FURNACE,
+                BlockIds::CRAFTING_TABLE,
+                // Add more block IDs here as needed
             ];
 
             if (in_array($block->getId(), $blockedBlocks, true)) {
