@@ -70,7 +70,7 @@ class ProtectCommand extends Command implements Listener {
             if (!$player->hasPermission("protectionplus.bypass")) {
                 if (!$this->checkBlockPlaceBreak($player)) {
                     $player->sendMessage("Block protection is active in the world $world. You cannot break blocks.");
-                    $event->setCancelled(true);
+                    $event->setCancelled();
                 }
             }
         }
@@ -88,7 +88,7 @@ class ProtectCommand extends Command implements Listener {
             if (!$player->hasPermission("protectionplus.bypass")) {
                 if (!$this->checkBlockPlaceBreak($player)) {
                     $player->sendMessage("Block protection is active in the world $world. You cannot place blocks.");
-                    $event->setCancelled(true);
+                    $event->setCancelled();
                 }
             }
         }
