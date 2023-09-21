@@ -11,17 +11,14 @@ use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
-use pocketmine\world\World;
 
 class ProtectCommand extends Command implements Listener {
 
     private $protectionActive = [];
-    private $plugin;
 
     public function __construct(PluginBase $plugin) {
         parent::__construct("protection", "Toggle block protection");
         $this->setPermission("protectionplus.protect");
-        $this->plugin = $plugin;
         $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
     }
 
@@ -57,7 +54,7 @@ class ProtectCommand extends Command implements Listener {
         $world = $player->getWorld()->getFolderName();
         if (!isset($this->wcfg[$world])) return true;
         if ($this->wcfg[$world] !== "protect") return false; // LOCKED!
-        return $this->owner->canPlaceBreakBlock($player, $world);
+        return true; // Add your additional checks for block place/break here
     }
 
     /**
@@ -70,7 +67,7 @@ class ProtectCommand extends Command implements Listener {
 
         if (isset($this->protectionActive[$world])) {
             if (!$player->hasPermission("protectionplus.bypass")) {
-                if ($this->checkBlockPlaceBreak($player)) {
+                if (!$this->checkBlockPlaceBreak($player)) {
                     $player->sendMessage("Block protection is active in the world $world. You cannot break blocks.");
                     $event->setCancelled(true);
                 }
@@ -88,7 +85,7 @@ class ProtectCommand extends Command implements Listener {
 
         if (isset($this->protectionActive[$world])) {
             if (!$player->hasPermission("protectionplus.bypass")) {
-                if ($this->checkBlockPlaceBreak($player)) {
+                if (!$this->checkBlockPlaceBreak($player)) {
                     $player->sendMessage("Block protection is active in the world $world. You cannot place blocks.");
                     $event->setCancelled(true);
                 }
