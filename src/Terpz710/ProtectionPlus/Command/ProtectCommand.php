@@ -7,20 +7,15 @@ namespace Terpz710\ProtectionPlus\Command;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
-use pocketmine\plugin\PluginBase;
-use pocketmine\event\Listener;
-use pocketmine\event\entity\EntityDamageEvent;
-use Terpz710\ProtectionPlus\Main;
+use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginOwnedTrait;
 
-class ProtectCommand extends Command implements Listener {
+class PvPCommand extends Command {
+    use PluginOwnedTrait;
 
-    private $plugin;
-
-    public function __construct(PluginBase $plugin) {
-        parent::__construct("protection", "Enable or disable protection");
-        $this->setPermission("protectionplus.protection");
-        $this->plugin = $plugin;
-        $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
+    public function __construct(Plugin $owningPlugin) {
+        parent::__construct("pvp", "Enable or disable PvP protection", null, [$owningPlugin]);
+        $this->setPermission("protectionplus.pvp");
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
@@ -31,7 +26,7 @@ class ProtectCommand extends Command implements Listener {
             }
 
             if (empty($args)) {
-                $sender->sendMessage("Usage: /protection <on|off>");
+                $sender->sendMessage("Usage: /pvp <on|off>");
                 return false;
             }
 
@@ -39,13 +34,13 @@ class ProtectCommand extends Command implements Listener {
 
             switch ($subcommand) {
                 case "on":
-                    $this->enableProtection($sender);
+                    $this->enablePvP($sender);
                     break;
                 case "off":
-                    $this->disableProtection($sender);
+                    $this->disablePvP($sender);
                     break;
                 default:
-                    $sender->sendMessage("Usage: /protection <on|off>");
+                    $sender->sendMessage("Usage: /pvp <on|off>");
             }
         } else {
             $sender->sendMessage("This command can only be used in-game.");
@@ -53,22 +48,15 @@ class ProtectCommand extends Command implements Listener {
         return true;
     }
 
-    private function enableProtection(Player $player): void {
-        $this->plugin->setProtectionEnabled($player, true);
-        $player->sendMessage("Protection is now enabled!");
-        $player->sendTitle("Protection Enabled", "", 10, 40, 10);
+    private function enablePvP(Player $player): void {
+        $player->setPvP(true);
+        $player->sendMessage("PvP protection is now disabled!");
+        $player->sendTitle("PvP Enabled", "", 10, 40, 10);
     }
 
-    private function disableProtection(Player $player): void {
-        $this->plugin->setProtectionEnabled($player, false);
-        $player->sendMessage("Protection is now disabled!");
-        $player->sendTitle("Protection Disabled", "", 10, 40, 10);
-    }
-
-    public function onEntityDamage(EntityDamageEvent $event): void {
-        $entity = $event->getEntity();
-        if ($entity instanceof Player && !$this->plugin->isProtectionEnabled($entity)) {
-            $event->setCancelled(true);
-        }
+    private function disablePvP(Player $player): void {
+        $player->setPvP(false);
+        $player->sendMessage("PvP protection is now enabled!");
+        $player->sendTitle("PvP Disabled", "", 10, 40, 10);
     }
 }
