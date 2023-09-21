@@ -11,6 +11,7 @@ use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
+use Terpz710\ProtectionPlus\Main;
 
 class ProtectCommand extends Command implements Listener {
 
@@ -61,9 +62,16 @@ class ProtectCommand extends Command implements Listener {
      */
     public function onBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
+        $world = $player->getWorld()->getFolderName();
+        $action = strtolower($args[0] ?? "");
+
         if ($this->checkBlockPlaceBreak($player)) {
-            $player->sendMessage("Block protection is active in this world. You cannot break blocks.");
-            $event->isCancelled();
+            if (isset($this->protectionActive[$world]) && $action === "on") {
+                $player->sendMessage("Block protection is active in this world. You cannot break blocks.");
+                $event->setCancelled(true); // Cancel the block breaking event
+            } else {
+                $event->setCancelled(false); // Allow block breaking event
+            }
         }
     }
 
@@ -73,9 +81,16 @@ class ProtectCommand extends Command implements Listener {
      */
     public function onBlockPlace(BlockPlaceEvent $event): void {
         $player = $event->getPlayer();
+        $world = $player->getWorld()->getFolderName();
+        $action = strtolower($args[0] ?? "");
+
         if ($this->checkBlockPlaceBreak($player)) {
-            $player->sendMessage("Block protection is active in this world. You cannot place blocks.");
-            $event->isCancelled();
+            if (isset($this->protectionActive[$world]) && $action === "on") {
+                $player->sendMessage("Block protection is active in this world. You cannot place blocks.");
+                $event->setCancelled(true); // Cancel the block placing event
+            } else {
+                $event->setCancelled(false); // Allow block placing event
+            }
         }
     }
 }
