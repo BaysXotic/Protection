@@ -6,9 +6,6 @@ namespace Terpz710\ProtectionPlus\Command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\item\Item;
-use pocketmine\item\StringToItemParser;
-use pocketmine\item\LegacyStringToItemParser;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\player\PlayerBucketEmptyEvent;
