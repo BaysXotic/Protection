@@ -2,123 +2,64 @@
 
 declare(strict_types=1);
 
-namespace Terpz710\ProtectionPlus\Command;
+namespace ProtectionPlus\Command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\event\Listener;
 use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\player\PlayerBucketEmptyEvent;
-use pocketmine\event\player\PlayerBucketFillEvent;
-use pocketmine\event\player\PlayerDropItemEvent;
+use pocketmine\event\Listener;
 use pocketmine\player\Player;
-use pocketmine\plugin\Plugin;
-use pocketmine\plugin\PluginOwnedTrait;
+use pocketmine\plugin\PluginBase;
 
-class ProtectCommand extends Command implements Listener {
-    use PluginOwnedTrait;
+class ProtectionCommand extends Command implements Listener {
 
-    public function __construct(Plugin $owningPlugin) {
-        parent::__construct("protection", "Enable or disable protection", null, [$owningPlugin]);
-        $this->setPermission("protectionplus.protection");
-        $owningPlugin->getServer()->getPluginManager()->registerEvents($this, $owningPlugin);
+    private $protectionActive = false;
+
+    public function __construct(PluginBase $plugin) {
+        parent::__construct("protection", "Toggle block protection");
+        $this->setPermission("protectionplus.protect");
+        $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
         if ($sender instanceof Player) {
             if (!$this->testPermission($sender)) {
-                $sender->sendMessage("You do not have permission to use this command.");
+                $sender->sendMessage("You do not have permission to use this command");
                 return true;
             }
 
-            if (empty($args)) {
-                $sender->sendMessage("Usage: /protection <on|off>");
-                return false;
-            }
+            $action = strtolower($args[0] ?? "");
 
-            $subcommand = strtolower(array_shift($args));
-
-            switch ($subcommand) {
+            switch ($action) {
                 case "on":
-                    $this->enableProtection($sender);
+                    $this->protectionActive = true;
+                    $sender->sendMessage("Block protection is now active.");
                     break;
                 case "off":
-                    $this->disableProtection($sender);
+                    $this->protectionActive = false;
+                    $sender->sendMessage("Block protection is now inactive.");
                     break;
                 default:
                     $sender->sendMessage("Usage: /protection <on|off>");
             }
         } else {
-            $sender->sendMessage("This command can only be used in-game.");
+            $sender->sendMessage("This command can only be used in-game");
         }
         return true;
     }
 
-    private function enableProtection(Player $player): void {
-        $player->sendMessage("Protection is now enabled!");
-        $player->sendTitle("Protection Enabled", "", 10, 40, 10);
-        $this->getOwningPlugin()->setProtectionEnabled($player, true);
-    }
-
-    private function disableProtection(Player $player): void {
-        $player->sendMessage("Protection is now disabled!");
-        $player->sendTitle("Protection Disabled", "", 10, 40, 10);
-        $this->getOwningPlugin()->setProtectionEnabled($player, false);
-    }
-
     /**
      * @param BlockBreakEvent $event
-     * @priority MONITOR
+     * @priority HIGHEST
      */
     public function onBlockBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
-        if (!$this->getOwningPlugin()->isProtectionEnabled($player)) {
-            $event->setCancelled(true);
-        }
-    }
 
-    /**
-     * @param BlockPlaceEvent $event
-     * @priority MONITOR
-     */
-    public function onBlockPlace(BlockPlaceEvent $event): void {
-        $player = $event->getPlayer();
-        if (!$this->getOwningPlugin()->isProtectionEnabled($player)) {
-            $event->setCancelled(true);
-        }
-    }
-
-    /**
-     * @param PlayerDropItemEvent $event
-     * @priority MONITOR
-     */
-    public function onPlayerDropItem(PlayerDropItemEvent $event): void {
-        $player = $event->getPlayer();
-        if (!$this->getOwningPlugin()->isProtectionEnabled($player)) {
-            $event->setCancelled(true);
-        }
-    }
-
-    /**
-     * @param PlayerBucketFillEvent $event
-     * @priority MONITOR
-     */
-    public function onPlayerBucketFill(PlayerBucketFillEvent $event): void {
-        $player = $event->getPlayer();
-        if (!$this->getOwningPlugin()->isProtectionEnabled($player)) {
-            $event->setCancelled(true);
-        }
-    }
-
-    /**
-     * @param PlayerBucketEmptyEvent $event
-     * @priority MONITOR
-     */
-    public function onPlayerBucketEmpty(PlayerBucketEmptyEvent $event): void {
-        $player = $event->getPlayer();
-        if (!$this->getOwningPlugin()->isProtectionEnabled($player)) {
-            $event->setCancelled(true);
+        if ($this->protectionActive) {
+            if (!$player->hasPermission("protectionplus.bypass")) {
+                $player->sendMessage("Block protection is active. You cannot break blocks.");
+                $event->setCancelled(true);
+            }
         }
     }
 }
