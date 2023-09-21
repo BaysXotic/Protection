@@ -6,24 +6,24 @@ namespace Terpz710\ProtectionPlus\Command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\player\Player;
-use pocketmine\plugin\PluginBase;
-use pocketmine\event\Listener;
-use pocketmine\block\Block;
-use Terpz710\ProtectionPlus\Main;
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\Listener;
+use pocketmine\player\Player;
+use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginOwnedTrait;
+use pocketmine\tile\ItemFrame;
+use pocketmine\tile\Sign;
 
 class InteractCommand extends Command implements Listener {
+    use PluginOwnedTrait;
 
-    private $plugin;
-    private $interactionEnabled;
-
-    public function __construct(PluginBase $plugin) {
-        parent::__construct("interact", "Enable or disable interaction with chests, doors, and players");
+    public function __construct(Plugin $owningPlugin) {
+        parent::__construct("interact", "Enable or disable interaction with doors, trapdoors, and chests", null, [$owningPlugin]);
         $this->setPermission("protectionplus.interact");
-        $this->plugin = $plugin;
-        $this->interactionEnabled = true;
-        $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
+        $owningPlugin->getServer()->getPluginManager()->registerEvents($this, $owningPlugin);
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
@@ -57,31 +57,44 @@ class InteractCommand extends Command implements Listener {
     }
 
     private function enableInteraction(Player $player): void {
-        $this->interactionEnabled = true;
-        $player->sendMessage("Interaction with chests, doors, and players is now enabled.");
+        $player->sendMessage("Interaction is now enabled!");
         $player->sendTitle("Interaction Enabled", "", 10, 40, 10);
+        $this->getOwningPlugin()->setAllowInteraction($player->getName(), true);
     }
 
     private function disableInteraction(Player $player): void {
-        $this->interactionEnabled = false;
-        $player->sendMessage("Interaction with chests, doors, and players is now disabled.");
+        $player->sendMessage("Interaction is now disabled!");
         $player->sendTitle("Interaction Disabled", "", 10, 40, 10);
+        $this->getOwningPlugin()->setAllowInteraction($player->getName(), false);
     }
 
+    /**
+     * @param PlayerInteractEvent $event
+     * @priority MONITOR
+     */
     public function onPlayerInteract(PlayerInteractEvent $event): void {
         $player = $event->getPlayer();
-        $block = $event->getBlock();
-        
-        if (!$this->interactionEnabled) {
-            if ($block->getId() === Block::CHEST || $block->getId() === Block::TRAPPED_CHEST) {
-                $event->setCancelled(true);
-                $player->sendMessage("Chest interaction is currently disabled.");
-                $player->sendTitle("Interaction Disabled", "Chest interaction is disabled", 10, 40, 10);
-            } elseif ($block->isInteractable() || $event->getEntity() instanceof Player) {
-                $event->setCancelled(true);
-                $player->sendMessage("Interaction with this block or player is currently disabled.");
-                $player->sendTitle("Interaction Disabled", "Block/player interaction is disabled", 10, 40, 10);
+        if (!$this->getOwningPlugin()->isInteractionAllowed($player->getName())) {
+            $block = $event->getBlock();
+            $id = $block->getId();
+
+            $blockedBlocks = [
+                // types of doors
+                324, 330, 427, 428, 429, 430,
+                // types of trapdoors
+                96, 167, 183, 184, 185,
+                // types of chests
+                27, 28, 54, 146, 338,
+            ];
+
+            if (in_array($id, $blockedBlocks, true)) {
+                $event->setCancelled();
+                $player->sendMessage("You can't interact with this block while interaction is disabled.");
+            } elseif ($block->getTile() instanceof ItemFrame || $block->getTile() instanceof Sign) {
+                $event->setCancelled();
+                $player->sendMessage("You can't interact with this entity while interaction is disabled.");
             }
         }
     }
 }
+
