@@ -7,8 +7,8 @@ namespace Terpz710\ProtectionPlus\Command;
 use pocketmine\block\BlockIds;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwnedTrait;
@@ -84,6 +84,7 @@ class InteractCommand extends Command implements Listener {
             ];
 
             if (in_array($block->getId(), $blockedBlocks, true)) {
+                // Cancel the interaction
                 $event->setCancelled();
                 $player->sendMessage("You can't interact with this block while interaction is disabled.");
             }
