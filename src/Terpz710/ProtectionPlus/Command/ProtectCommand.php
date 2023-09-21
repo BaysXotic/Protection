@@ -9,12 +9,14 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\player\PlayerBucketEmptyEvent;
+use pocketmine\event\player\PlayerBucketFillEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwnedTrait;
 
-class ProtectCommand extends Command implements Listener {
+class ProtectionCommand extends Command implements Listener {
     use PluginOwnedTrait;
 
     public function __construct(Plugin $owningPlugin) {
@@ -92,6 +94,28 @@ class ProtectCommand extends Command implements Listener {
      * @priority MONITOR
      */
     public function onPlayerDropItem(PlayerDropItemEvent $event): void {
+        $player = $event->getPlayer();
+        if (!$this->getOwningPlugin()->isProtectionEnabled($player)) {
+            $event->setCancelled(true);
+        }
+    }
+
+    /**
+     * @param PlayerBucketFillEvent $event
+     * @priority MONITOR
+     */
+    public function onPlayerBucketFill(PlayerBucketFillEvent $event): void {
+        $player = $event->getPlayer();
+        if (!$this->getOwningPlugin()->isProtectionEnabled($player)) {
+            $event->setCancelled(true);
+        }
+    }
+
+    /**
+     * @param PlayerBucketEmptyEvent $event
+     * @priority MONITOR
+     */
+    public function onPlayerBucketEmpty(PlayerBucketEmptyEvent $event): void {
         $player = $event->getPlayer();
         if (!$this->getOwningPlugin()->isProtectionEnabled($player)) {
             $event->setCancelled(true);
