@@ -86,8 +86,8 @@ class ProtectCommand extends Command implements Listener {
      */
     private function handleBlockAction($event, Player $player): void {
         if ($event->isCancelled()) return;
-        if ($this->checkBlockPlaceBreak($player)) {
-            $this->owner->msg($player, mc::_("You are not allowed to do that here"));
+        if ($this->handleBlockAction($player)) {
+            $this->sendMessage("You are not allowed to do that here");
             $event->cancel();
         }
     }
