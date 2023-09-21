@@ -27,33 +27,36 @@ class ProtectCommand extends Command implements Listener {
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
-        if ($sender instanceof Player) {
-            if (!$this->testPermission($sender)) {
-                $sender->sendMessage("You do not have permission to use this command");
-                return true;
-            }
+    if ($sender instanceof Player) {
+        if (!$this->testPermission($sender)) {
+            $sender->sendMessage("You do not have permission to use this command");
+            return true;
+        }
 
-            $world = $sender->getWorld()->getFolderName();
-            $action = strtolower($args[0] ?? "");
+        $world = $sender->getWorld()->getFolderName();
+        $action = strtolower($args[0] ?? "");
 
-            switch ($action) {
-                case "on":
-                    $this->protectionActive[$world] = true;
-                    $sender->sendMessage("Block protection is now active in the $world.");
-                    break;
-                case "off":
+        switch ($action) {
+            case "on":
+                $this->protectionActive[$world] = true;
+                $sender->sendMessage("Block protection is now active in the $world.");
+                break;
+            case "off":
+                if (isset($this->protectionActive[$world])) {
                     unset($this->protectionActive[$world]);
                     $sender->sendMessage("Block protection is now inactive in the $world.");
-                    break;
-                default:
-                    $sender->sendMessage("Usage: /protection <on|off>");
-            }
-        } else {
-            $sender->sendMessage("This command can only be used in-game");
+                } else {
+                    $sender->sendMessage("Block protection is already inactive in the $world.");
+                }
+                break;
+            default:
+                $sender->sendMessage("Usage: /protection <on|off>");
         }
-        return true;
+    } else {
+        $sender->sendMessage("This command can only be used in-game");
     }
-
+    return true;
+}
     /**
      * @param BlockBreakEvent $event
      * @priority HIGHEST
