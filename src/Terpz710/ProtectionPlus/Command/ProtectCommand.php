@@ -8,6 +8,10 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\player\PlayerBucketEmptyEvent;
+use pocketmine\event\player\PlayerBucketFillEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
@@ -79,14 +83,65 @@ class ProtectCommand extends Command implements Listener {
     }
 
     /**
- * Handle block action and send a message to the player.
- *
- * @param $event
- * @param Player $player
+     * @param PlayerBucketEmptyEvent $event
+     * @priority HIGHEST
+     */
+    public function onPlayerEmptyBucket(PlayerBucketEmptyEvent $event): void {
+        $player = $event->getPlayer();
+        $world = $player->getWorld()->getFolderName();
+        if (isset($this->protectionActive[$world])) {
+            $player->sendMessage("Block protection is active in this world. You cannot empty buckets.");
+            $event->cancel();
+        }
+    }
+
+    /**
+     * @param PlayerBucketFillEvent $event
+     * @priority HIGHEST
+     */
+    public function onPlayerFillBucket(PlayerBucketFillEvent $event): void {
+        $player = $event->getPlayer();
+        $world = $player->getWorld()->getFolderName();
+        if (isset($this->protectionActive[$world])) {
+            $player->sendMessage("Block protection is active in this world. You cannot fill buckets.");
+            $event->cancel();
+        }
+    }
+
+    /**
+     * @param PlayerDropItemEvent $event
+     * @priority HIGHEST
+     */
+    public function onPlayerDropItem(PlayerDropItemEvent $event): void {
+        $player = $event->getPlayer();
+        $world = $player->getWorld()->getFolderName();
+        if (isset($this->protectionActive[$world])) {
+            $player->sendMessage("Block protection is active in this world. You cannot drop items.");
+            $event->cancel();
+        }
+    }
+
+    /**
+     * Handle block action and send a message to the player.
+     *
+     * @param $event
+     * @param Player $player
+     */
+    private function handleBlockAction($event, Player $player): void {
+        if ($event->isCancelled()) return;
+        $event->cancel();
+    }
+
+/**
+ * @param PlayerInteractEvent $event
+ * @priority HIGHEST
  */
-private function handleBlockAction($event, Player $player): void {
-    if ($event->isCancelled()) return;
-    $player->sendMessage("You are not allowed to do that here");
-    $event->cancel();
+public function onPlayerInteract(PlayerInteractEvent $event): void {
+    $player = $event->getPlayer();
+    $world = $player->getWorld()->getFolderName();
+    if (isset($this->protectionActive[$world])) {
+        $player->sendMessage("Block protection is active in this world. You cannot use items.");
+        $event->cancel();
+        }
     }
 }
