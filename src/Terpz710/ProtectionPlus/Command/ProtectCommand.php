@@ -14,7 +14,7 @@ use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwnedTrait;
 
-class ProtectionCommand extends Command implements Listener {
+class ProtectCommand extends Command implements Listener {
     use PluginOwnedTrait;
 
     public function __construct(Plugin $owningPlugin) {
