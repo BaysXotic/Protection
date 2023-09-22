@@ -11,6 +11,6 @@ permissions:
   protectionplus.interaction:
     description: Allows players to enable/disable general interaction.
     default: op
-  protectionplus.pvp:
+  protectionplus.damage:
     description: Allows players to enable/disable general pvp.
     default: op
