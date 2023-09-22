@@ -8,3 +8,6 @@ permissions:
   protectionplus.protect:
     description: Allows players to enable/disable general protection.
     default: op
+  protectionplus.interaction:
+    description: Allows players to enable/disable general interaction.
+    default: op
