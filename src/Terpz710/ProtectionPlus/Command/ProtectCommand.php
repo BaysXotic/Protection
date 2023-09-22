@@ -90,7 +90,7 @@ class ProtectCommand extends Command implements Listener {
         $player = $event->getPlayer();
         $world = $player->getWorld()->getFolderName();
         if (isset($this->protectionActive[$world])) {
-            $player->sendMessage("Block protection is active in this world. You cannot empty buckets.");
+            $player->sendMessage("Block protection is active in this world.");
             $event->cancel();
         }
     }
@@ -103,7 +103,7 @@ class ProtectCommand extends Command implements Listener {
         $player = $event->getPlayer();
         $world = $player->getWorld()->getFolderName();
         if (isset($this->protectionActive[$world])) {
-            $player->sendMessage("Block protection is active in this world. You cannot fill buckets.");
+            $player->sendMessage("Block protection is active in this world.");
             $event->cancel();
         }
     }
@@ -116,7 +116,7 @@ class ProtectCommand extends Command implements Listener {
         $player = $event->getPlayer();
         $world = $player->getWorld()->getFolderName();
         if (isset($this->protectionActive[$world])) {
-            $player->sendMessage("Block protection is active in this world. You cannot drop items.");
+            $player->sendMessage("Block protection is active in this world.");
             $event->cancel();
         }
     }
