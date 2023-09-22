@@ -28,35 +28,35 @@ class InteractCommand extends Command implements Listener {
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
-        if ($sender instanceof Player) {
-            if (!$this->testPermission($sender)) {
-                $sender->sendMessage("You do not have permission to use this command");
-                return true;
-            }
+    if ($sender instanceof Player) {
+        if (!$this->testPermission($sender)) {
+            $sender->sendMessage("You do not have permission to use this command");
+            return true;
+        }
 
-            if (isset($args[0])) {
-                $action = strtolower($args[0]);
-                switch ($action) {
-                    case "on":
-                        $this->interactionEnabled = true;
-                        $sender->sendMessage("Block interaction is now active.");
-                        break;
-                    case "off":
-                        $this->interactionEnabled = false;
-                        $sender->sendMessage("Block interaction is now inactive.");
-                        break;
-                    default:
-                        $sender->sendMessage("Usage: /interaction <on|off>");
-                        return false;
-                }
-            } else {
-                $sender->sendMessage("Usage: /interaction <on|off>");
+        if (isset($args[0])) {
+            $action = strtolower($args[0]);
+            switch ($action) {
+                case "on":
+                    $this->interactionEnabled = true;
+                    $sender->sendMessage("Block interaction is now active.");
+                    break;
+                case "off":
+                    $this->interactionEnabled = false;
+                    $sender->sendMessage("Block interaction is now inactive.");
+                    break;
+                default:
+                    $sender->sendMessage("Usage: /interaction <on|off>");
+                    return false;
             }
         } else {
-            $sender->sendMessage("This command can only be used in-game");
+            $sender->sendMessage("Usage: /interaction <on|off>");
         }
-        return true;
+    } else {
+        $sender->sendMessage("This command can only be used in-game");
     }
+    return true;
+}
 
     /**
      * @param InventoryOpenEvent $event
