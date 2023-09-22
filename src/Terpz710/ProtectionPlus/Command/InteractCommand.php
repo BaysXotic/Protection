@@ -40,19 +40,13 @@ class InteractCommand extends Command implements Listener {
                     case "on":
                         if ($this->interactionEnabled) {
                             $this->interactionEnabled = true;
-                            $sender->sendMessage("Block interaction is now inactive.");
-                        } else {
-                            $this->interactionEnabled = true;
                             $sender->sendMessage("Block interaction is now active.");
                         }
                         break;
                     case "off":
                         if ($this->interactionEnabled) {
-                            $this->interactionEnabled =  false;
-                            $sender->sendMessage("Block interaction is now inactive.");
-                        } else {
                             $this->interactionEnabled = false;
-                            $sender->sendMessage("Block interaction is now active.");
+                            $sender->sendMessage("Block interaction is now inactive.");
                         }
                         break;
                     default:
