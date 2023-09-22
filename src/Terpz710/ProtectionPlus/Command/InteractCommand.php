@@ -8,11 +8,13 @@ use pocketmine\player\Player;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\inventory\InventoryOpenEvent;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\Listener;
 use pocketmine\inventory\BaseInventory;
 use pocketmine\inventory\PlayerCraftingInventory;
 use pocketmine\inventory\CreativeInventory;
 use pocketmine\inventory\PlayerInventory;
+use pocketmine\item\FlintSteel;
 use pocketmine\plugin\PluginBase;
 
 class InteractCommand extends Command implements Listener {
@@ -72,9 +74,32 @@ class InteractCommand extends Command implements Listener {
         $player = $event->getPlayer();
         $inventory = $event->getInventory();
 
-        if (!$this->interactionEnabled && ($inventory instanceof PlayerCraftingInventory || $inventory instanceof BaseInventory)) {
-            $player->sendMessage("Inventory interaction is blocked.");
-            $event->cancel();
+        $this->handleInteractionAction($event, $player);
+    }
+
+    /**
+     * @param PlayerInteractEvent $event
+     * @priority HIGHEST
+     */
+    public function onPlayerInteract(PlayerInteractEvent $event): void {
+        $player = $event->getPlayer();
+        $item = $event->getItem();
+        if ($item instanceof FlintSteel) {
+            $this->handleInteractionAction($event, $player);
+        }
+    }
+
+    /**
+     * Handle interaction action and send a message to the player.
+     *
+     * @param $event
+     * @param Player $player
+     */
+    private function handleInteractionAction($event, Player $player): void {
+        if (!$this->interactionEnabled && ($event instanceof InventoryOpenEvent || $event instanceof PlayerInteractEvent)) {
+            if ($event->isCancelled()) return;
+            $event->setCancelled(true);
+            $player->sendMessage("Interaction is blocked.");
         }
     }
 }
