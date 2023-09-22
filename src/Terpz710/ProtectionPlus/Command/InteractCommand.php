@@ -57,7 +57,7 @@ class InteractCommand extends Command implements Listener {
         $player = $event->getPlayer();
         $inventory = $event->getInventory();
 
-        if ($inventory instanceof CraftingGrid || $inventory instanceof BaseInventory) {
+        if ($inventory instanceof CraftingGridInventory || $inventory instanceof BaseInventory) {
             $player->sendMessage("Inventory interaction is blocked.");
             $event->cancel();
         }
