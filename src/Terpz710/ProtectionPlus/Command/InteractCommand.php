@@ -98,7 +98,7 @@ class InteractCommand extends Command implements Listener {
     private function handleInteractionAction($event, Player $player): void {
         if (!$this->interactionEnabled && ($event instanceof InventoryOpenEvent || $event instanceof PlayerInteractEvent)) {
             if ($event->isCancelled()) return;
-            $event->setCancelled(true);
+            $event->cancel();
             $player->sendMessage("Interaction is blocked.");
         }
     }
