@@ -1,5 +1,3 @@
-<?php
-
 declare(strict_types=1);
 
 namespace Terpz710\ProtectionPlus\Command;
@@ -17,6 +15,8 @@ use pocketmine\plugin\PluginBase;
 
 class InteractCommand extends Command implements Listener {
 
+    private $interactionEnabled = true;
+
     public function __construct(PluginBase $plugin) {
         parent::__construct("interaction", "Toggle block interaction");
         $this->setPermission("protectionplus.interaction");
@@ -30,18 +30,31 @@ class InteractCommand extends Command implements Listener {
                 return true;
             }
 
-            $world = $sender->getWorld()->getFolderName();
-            $action = strtolower($args[0] ?? "");
-
-            switch ($action) {
-                case "on":
-                    $sender->sendMessage("Block interaction blocking is now active in the $world.");
-                    break;
-                case "off":
-                    $sender->sendMessage("Block interaction blocking is now inactive in the $world.");
-                    break;
-                default:
-                    $sender->sendMessage("Usage: /interaction <on|off>");
+            if (isset($args[0])) {
+                $action = strtolower($args[0]);
+                switch ($action) {
+                    case "on":
+                        if (!$this->interactionEnabled) {
+                            $this->interactionEnabled = true;
+                            $sender->sendMessage("Block interaction is now active.");
+                        } else {
+                            $sender->sendMessage("Block interaction is already active.");
+                        }
+                        break;
+                    case "off":
+                        if ($this->interactionEnabled) {
+                            $this->interactionEnabled = false;
+                            $sender->sendMessage("Block interaction is now inactive.");
+                        } else {
+                            $sender->sendMessage("Block interaction is already inactive.");
+                        }
+                        break;
+                    default:
+                        $sender->sendMessage("Usage: /interaction <on|off>");
+                        return false;
+                }
+            } else {
+                $sender->sendMessage("Usage: /interaction <on|off>");
             }
         } else {
             $sender->sendMessage("This command can only be used in-game");
@@ -57,7 +70,7 @@ class InteractCommand extends Command implements Listener {
         $player = $event->getPlayer();
         $inventory = $event->getInventory();
 
-        if ($inventory instanceof PlayerCraftingInventory || $inventory instanceof BaseInventory) {
+        if (!$this->interactionEnabled && ($inventory instanceof PlayerCraftingInventory || $inventory instanceof BaseInventory)) {
             $player->sendMessage("Inventory interaction is blocked.");
             $event->cancel();
         }
