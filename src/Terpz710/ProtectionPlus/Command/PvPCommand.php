@@ -10,9 +10,9 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\plugin\PluginBase;
-use pocketmine\event\Listener; // Add this import for the Listener interface
+use pocketmine\event\Listener;
 
-class PvPCommand extends Command implements Listener { // Implement the Listener interface
+class PvPCommand extends Command implements Listener {
 
     private $damageEnabled = true;
 
