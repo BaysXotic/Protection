@@ -10,7 +10,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\inventory\InventoryOpenEvent;
 use pocketmine\event\Listener;
 use pocketmine\inventory\BaseInventory;
-use pocketmine\inventory\CraftingGridInventory;
+use pocketmine\inventory\PlayerCraftingInventory;
 use pocketmine\inventory\CreativeInventory;
 use pocketmine\inventory\PlayerInventory;
 use pocketmine\plugin\PluginBase;
@@ -57,7 +57,7 @@ class InteractCommand extends Command implements Listener {
         $player = $event->getPlayer();
         $inventory = $event->getInventory();
 
-        if ($inventory instanceof CraftingGridInventory || $inventory instanceof BaseInventory) {
+        if ($inventory instanceof PlayerCraftingInventory || $inventory instanceof BaseInventory) {
             $player->sendMessage("Inventory interaction is blocked.");
             $event->cancel();
         }
